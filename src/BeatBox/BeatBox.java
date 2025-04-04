@@ -6,6 +6,7 @@ package BeatBox;
 
 import BeatBox.GUI.Components.Buttons;
 import BeatBox.GUI.Components.InstrumentsGUI;
+import BeatBox.Music.Beats;
 import javax.swing.*;
 import java.awt.*;
 
@@ -19,6 +20,7 @@ public class BeatBox {
      * @param args the command line arguments
      */
     Buttons bbButtons = Buttons.getInstance();
+    Beats beats = Beats.getInstance();
     InstrumentsGUI iGUI = new InstrumentsGUI();
     
     JFrame frame;
@@ -30,6 +32,7 @@ public class BeatBox {
     }
 
     private void gui() {
+        beats.setUpMidi();
         frame = new JFrame("Cyber BeatBox");
         BorderLayout layout = new BorderLayout();
         background = new JPanel(layout);

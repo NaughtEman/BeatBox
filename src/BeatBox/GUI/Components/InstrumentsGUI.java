@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.stream.*;
 import javax.swing.*;
 import BeatBox.Instruments.Instruments;
+import BeatBox.Music.Beats;
 import java.awt.Dimension;
 import java.awt.Label;
 
@@ -100,22 +101,29 @@ public class InstrumentsGUI {
     
     class CheckListener implements ItemListener{
         private String instrumentName;
-        private int instrumentChannel;
+        private int noteNo;
         int no;
+        Beats beats = Beats.getInstance();
         
         CheckListener(String name, int no){
             this.instrumentName = name;
-            this.instrumentChannel = ins.getValue(name);
-            this.no = no + 1;
+            this.noteNo = ins.getValue(name);
+            this.no = no;
         }
 
         @Override
         public void itemStateChanged(ItemEvent e) {
             // Do something
             JCheckBox source = (JCheckBox) e.getSource();
-            //int i = chkBxs.indexOf(source) +1;
-            String chckBx = source.isSelected() ? "On" : "Off";
-            System.out.println(instrumentName + " checkbox " + no + " is " + chckBx);
+            beats.makeTracks(noteNo, no);
+            
+            /*if(e.getStateChange() == ItemEvent.SELECTED){
+                beats.makeTracks(noteNo, no);
+            }else{
+                beats.makeTracks(128,noteNo, no);
+            }*/
+            
+            
         }
 
     }

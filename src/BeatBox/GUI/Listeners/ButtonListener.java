@@ -9,10 +9,12 @@ package BeatBox.GUI.Listeners;
  * @author dosum
  */
 
+import BeatBox.Music.Beats;
 import java.awt.*;
 import java.awt.event.*;
 
 public class ButtonListener implements ActionListener{
+    Beats beats = Beats.getInstance();
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -24,16 +26,25 @@ public class ButtonListener implements ActionListener{
        */
         switch (actionCmd) {
             case "start":
-                System.out.println("Start Button Clicked");
+                try{
+                    beats.play();
+                }catch(Exception ex){ex.printStackTrace();}
+                
                 break;
             case "stop":
-                System.out.println("Stop Button Clicked");
+                try{
+                    beats.stop();
+                }catch(Exception ex){ex.printStackTrace();}
                 break;
             case "tempo up":
-                System.out.println("Tempo Up Button Clicked");
+                try{
+                    beats.updateTempo(5);
+                }catch(Exception ex){ex.printStackTrace();}
                 break;
             case "tempo down":
-                System.out.println("Tempo Down Button Clicked");
+                try{
+                    beats.updateTempo(-5);
+                }catch(Exception ex){ex.printStackTrace();}
                 break;
             default:
                 System.out.println("No Button Clicked");
