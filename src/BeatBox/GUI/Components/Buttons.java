@@ -11,16 +11,16 @@ import javax.swing.*;
  *
  * @author dosum
  */
-public class BeatBoxButtons {
+public class Buttons {
     
-    private static BeatBoxButtons instance;
+    private static Buttons instance;
 
-    public BeatBoxButtons(){}
+    public Buttons(){}
     
-    public static BeatBoxButtons getInstance(){
+    public static Buttons getInstance(){
     
         if(instance ==null){
-            instance =  new BeatBoxButtons();
+            instance =  new Buttons();
         }
         return instance;
     }

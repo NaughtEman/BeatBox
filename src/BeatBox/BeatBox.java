@@ -4,7 +4,8 @@
  */
 package BeatBox;
 
-import BeatBox.GUI.Components.BeatBoxButtons;
+import BeatBox.GUI.Components.Buttons;
+import BeatBox.GUI.Components.InstrumentsGUI;
 import javax.swing.*;
 import java.awt.*;
 
@@ -17,7 +18,11 @@ public class BeatBox {
     /**
      * @param args the command line arguments
      */
-    BeatBoxButtons bbButtons = BeatBoxButtons.getInstance();
+    Buttons bbButtons = Buttons.getInstance();
+    InstrumentsGUI iGUI = new InstrumentsGUI();
+    
+    JFrame frame;
+    JPanel background;
     
     public static void main(String[] args) {
         BeatBox bb = new BeatBox();
@@ -25,12 +30,19 @@ public class BeatBox {
     }
 
     private void gui() {
-        JFrame frame = new JFrame("Cyber BeatBox");
+        frame = new JFrame("Cyber BeatBox");
+        BorderLayout layout = new BorderLayout();
+        background = new JPanel(layout);
+        background.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         
-        frame.getContentPane().add(BorderLayout.CENTER, bbButtons.Jpanels());
+        background.add(BorderLayout.EAST, bbButtons.Jpanels());
+        background.add(BorderLayout.CENTER, iGUI.getIPanel());
+        
+        frame.getContentPane().add(background);
         
         frame.setVisible(true);
-        frame.setSize(350, 300);
+        frame.setBounds(50,50,300,300);
+        frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
