@@ -11,10 +11,12 @@ import java.awt.event.ItemListener;
 import java.util.*;
 import java.util.stream.*;
 import javax.swing.*;
-import BeatBox.Instruments.Instruments;
+import BeatBox.Instruments.Channel;
 import BeatBox.Music.Beats;
 import java.awt.Dimension;
 import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -25,18 +27,20 @@ public class InstrumentsGUI {
     private static final int NUM_CHECKBOXES = 16;
     private  List<JCheckBox> chkBxs;
     private final JPanel wholePanel;
-    private Instruments ins;
+    private Channel channel;
     private List<JPanel> nameChkbxs = new ArrayList<>();
+    private String channelName = "Drums";
 
     
     public InstrumentsGUI() {
-       ins = new Instruments();
+       channel = new Channel(channelName);
         
         // Main panel using BorderLayout
         wholePanel = new JPanel(new BorderLayout());
         
         //Create instrument grid
         JPanel instrumentPanel = createNameChkbxs();
+        JPanel menuPanel = createMenu();
         instrumentPanel.setLayout(new BoxLayout(instrumentPanel, BoxLayout.Y_AXIS));
         
         
@@ -46,6 +50,7 @@ public class InstrumentsGUI {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
         wholePanel.add(BorderLayout.CENTER, scrollPane);
+        wholePanel.add(BorderLayout.NORTH, menuPanel);
         
     }
     
@@ -58,7 +63,7 @@ public class InstrumentsGUI {
         JPanel gridPanel = new JPanel(new GridLayout(0, 17, 5, 5));
         gridPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        Arrays.stream(ins.getInstrumentsNames()).forEach(name -> {
+        Arrays.stream(channel.getInstrumentsNames()).forEach(name -> {
         
             JLabel nameLabel = new JLabel(name);
             
@@ -99,6 +104,17 @@ public class InstrumentsGUI {
         return checkBoxPanel;
     } 
     
+    public JPanel createMenu(){
+        
+        JPanel menuPanel = new JPanel();
+        JComboBox instrumentList = new JComboBox(Channel.getChannelsNames());
+        instrumentList.setSelectedIndex(0); // Select first item by default
+        instrumentList.addActionListener(new MenuListener());
+        menuPanel.add(BorderLayout.CENTER, instrumentList);
+        
+        return menuPanel;
+    }
+    
     class CheckListener implements ItemListener{
         private String instrumentName;
         private int noteNo;
@@ -107,7 +123,7 @@ public class InstrumentsGUI {
         
         CheckListener(String name, int no){
             this.instrumentName = name;
-            this.noteNo = ins.getValue(name);
+            this.noteNo = channel.getValue(name);
             this.no = no;
         }
 
@@ -126,6 +142,14 @@ public class InstrumentsGUI {
             
         }
 
+    }
+    
+    class MenuListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JComboBox cb = (JComboBox)e.getSource();
+            channelName = (String)cb.getSelectedItem();
+        }
     }
     
 }
