@@ -21,6 +21,7 @@ public class Beats {
     private Map<String, Track> instrumentTracks;
     private int tempoBPM = 120;
     private static Beats instance;
+    private int currentChannel = 9; // Default to channel 9 (percussion)
     
     public Beats(){}
     
@@ -38,15 +39,24 @@ public class Beats {
            sequencer = MidiSystem.getSequencer();
            sequencer.open();
            
-           sequence = new Sequence(Sequence.PPQ,4);
+           createNewSequence();
            
            track = sequence.createTrack();
            
            sequencer.setTempoInBPM(tempoBPM);
            
-       } catch (Exception e) { }
+       } catch (Exception e) { e.printStackTrace();}
        
    }
+   
+   private void createNewSequence() {
+        try {
+            sequence = new Sequence(Sequence.PPQ, 4);
+            track = sequence.createTrack(); // Create fresh track
+        } catch (InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+    }
    
    public MidiEvent makeEvent( int comd, int chan, int one, int two, int tick) {
         MidiEvent event = null;
@@ -61,11 +71,56 @@ public class Beats {
     }
    
    public void makeTracks(int key, int tick){
+       // Clear previous events at this tick position
+        removeEventsAtTick(tick);
        
-       track.add(makeEvent(144,9,key,100,tick));
-       track.add(makeEvent(128,9,key,100,tick+1));
+       track.add(makeEvent(144,currentChannel,key,100,tick));
+       track.add(makeEvent(128,currentChannel,key,100,tick+1));
        
    }
+   
+   public void removeNote(int key, int tick) {
+        removeEventsForNote(key, tick);
+    }
+   
+   // Helper method to find and remove events
+private void removeEventsForNote(int key, int tick) {
+    List<MidiEvent> toRemove = new ArrayList<>();
+    
+    for (int i = 0; i < track.size(); i++) {
+        MidiEvent event = track.get(i);
+        if (event.getTick() == tick) {
+            ShortMessage msg = (ShortMessage)event.getMessage();
+            if (msg.getData1() == key) {  // Check if note matches
+                toRemove.add(event);
+            }
+        }
+    }
+    
+    toRemove.forEach(event -> track.remove(event));
+}
+   
+   private void removeEventsAtTick(int tick) {
+        // Remove any existing events at this tick position
+        List<MidiEvent> toRemove = new ArrayList<>();
+        for (int i = 0; i < track.size(); i++) {
+            MidiEvent event = track.get(i);
+            if (event.getTick() == tick || event.getTick() == tick + 1) {
+                toRemove.add(event);
+            }
+        }
+        toRemove.forEach(event -> track.remove(event));
+    }
+   
+   // Add this new method to handle channel changes
+    public void setCurrentChannel(int channel) {
+        this.currentChannel = channel;
+        resetSequence(); // Clear existing sequence when channel changes
+    }
+    
+    public void resetSequence() {
+        createNewSequence(); // Create fresh sequence and track
+    }
    
    public void play() throws InvalidMidiDataException {
         sequencer.setSequence(sequence);

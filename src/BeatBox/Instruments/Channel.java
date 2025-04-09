@@ -53,7 +53,10 @@ public class Channel {
         return instrumentsNames;
     }
     
-
+    public int getChannel(){
+        return channel;
+    }
+    
     public String[] getInstrumentsNames() {
         return instruments.getInstrumentsNames();
     }

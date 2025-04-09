@@ -20,6 +20,7 @@ public class InstrumentsPanel  extends JPanel {
     private JPanel checkBoxPanel;
     private static final int NUM_CHECKBOXES = 16;
     private List<JCheckBox> chkBxs  = new ArrayList<>();
+    private Map<String, List<JCheckBox>> chkBxsMap = new HashMap<>();
     private Channel channel;
     
     public InstrumentsPanel(){
@@ -33,13 +34,14 @@ public class InstrumentsPanel  extends JPanel {
         if (!channelName.equals(currentChannelName)) {
             currentChannelName = channelName;
             channel = new Channel(channelName); // Initialize channel here
+            Beats.getInstance().setCurrentChannel(channel.getChannel());
             refreshCheckboxes();
         }
     }
 
     private void refreshCheckboxes() {
         checkBoxPanel.removeAll();
-        
+        chkBxsMap.clear(); 
         JPanel gridPanel = new JPanel(new GridLayout(channel.getInstrumentsNo(), 1, 1, 1));
         gridPanel.setLayout(new BoxLayout(gridPanel, BoxLayout.Y_AXIS));
         gridPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -71,12 +73,18 @@ public class InstrumentsPanel  extends JPanel {
         checkBoxPanel.repaint();
     }
     
-    private JPanel createChkBxs(String instrumentName){
-        
-        //JPanel checkBoxPanel = new JPanel(new GridLayout(1, NUM_CHECKBOXES, 2, 0));
+    private JPanel createChkBxs(String instrumentName){        
         JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         
         // Initialize checkboxes
+        /*List <JCheckBox> rowChkBxs = IntStream.range(0, NUM_CHECKBOXES)
+                .mapToObj(i -> {
+                    JCheckBox chkBx = new JCheckBox();
+                    chkBx.addItemListener(new CheckListener(instrumentName, i));
+                    return chkBx;
+                })
+                .collect(Collectors.toList());*/
+        
         chkBxs = IntStream.range(0, NUM_CHECKBOXES)
                 .mapToObj(i -> {
                     JCheckBox chkBx = new JCheckBox();
@@ -84,10 +92,12 @@ public class InstrumentsPanel  extends JPanel {
                     return chkBx;
                 })
                 .collect(Collectors.toList());
-
+        
         // Set up grid
         checkBoxPanel.setLayout(new GridLayout(1, NUM_CHECKBOXES, 2, 1));
-
+        
+        chkBxsMap.put(instrumentName, chkBxs);
+        //rowChkBxs.forEach(checkBoxPanel::add);
         chkBxs.forEach(checkBoxPanel::add);
         
         return checkBoxPanel;
@@ -95,13 +105,11 @@ public class InstrumentsPanel  extends JPanel {
     
     class CheckListener implements ItemListener{
         private final String instrumentName;
-        private final int noteNo;
         private final int no;
         private final Beats beats = Beats.getInstance();
         
         CheckListener(String name, int no){
             this.instrumentName = name;
-            this.noteNo = channel.getValue(name);
             this.no = no;
         }
 
@@ -109,13 +117,18 @@ public class InstrumentsPanel  extends JPanel {
         public void itemStateChanged(ItemEvent e) {
             // Do something
             JCheckBox source = (JCheckBox) e.getSource();
+            int noteNo = channel.getValue(instrumentName);
             beats.makeTracks(noteNo, no);
+            System.out.println("Channel name: " + currentChannelName + " Note no: " + noteNo  + " No: " + no);
             
-            /*if(e.getStateChange() == ItemEvent.SELECTED){
+            
+            if(e.getStateChange() == ItemEvent.SELECTED){
                 beats.makeTracks(noteNo, no);
+                beats.makeTracks(noteNo, no+1);
             }else{
-                beats.makeTracks(128,noteNo, no);
-            }*/
+                beats.removeNote(noteNo, no);
+                beats.removeNote(noteNo, no+1);
+            }
   
         }
 

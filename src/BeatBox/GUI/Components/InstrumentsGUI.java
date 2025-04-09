@@ -70,33 +70,4 @@ public class InstrumentsGUI {
         menuPanel.add(BorderLayout.CENTER, instrumentList);
     }
     
-    class CheckListener implements ItemListener{
-        private final String instrumentName;
-        private final int noteNo;
-        private final int no;
-        private final Beats beats = Beats.getInstance();
-        private final Channel channel = new Channel(channelName);
-        
-        CheckListener(String name, int no){
-            this.instrumentName = name;
-            this.noteNo = channel.getValue(name);
-            this.no = no;
-        }
-
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            // Do something
-            JCheckBox source = (JCheckBox) e.getSource();
-            beats.makeTracks(noteNo, no);
-            
-            /*if(e.getStateChange() == ItemEvent.SELECTED){
-                beats.makeTracks(noteNo, no);
-            }else{
-                beats.makeTracks(128,noteNo, no);
-            }*/
-  
-        }
-
-    }
-    
 }
