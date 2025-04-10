@@ -13,6 +13,7 @@ import java.util.stream.*;
 import javax.swing.*;
 import BeatBox.Instruments.Channel;
 import BeatBox.Music.Beats;
+import BeatBox.Utilities.ChannelStateManager;
 import java.awt.Dimension;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
@@ -68,6 +69,17 @@ public class InstrumentsGUI {
             instrumentPanel.setChannel(channelName);
         });
         menuPanel.add(BorderLayout.CENTER, instrumentList);
+    }
+    
+    public void switchChannel(String newChannelName) {
+        // Save current state
+        if (instrumentPanel != null) {
+            ChannelStateManager.saveState(this.channelName, instrumentPanel);
+        }
+        
+        // Update channel
+        this.channelName = newChannelName;
+        instrumentPanel.setChannel(newChannelName);
     }
     
 }

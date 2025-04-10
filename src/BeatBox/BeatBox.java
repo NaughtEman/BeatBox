@@ -7,8 +7,11 @@ package BeatBox;
 import BeatBox.GUI.Components.Buttons;
 import BeatBox.GUI.Components.InstrumentsGUI;
 import BeatBox.Music.Beats;
+import BeatBox.Utilities.ChannelStateManager;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  *
@@ -32,8 +35,21 @@ public class BeatBox {
     }
 
     private void gui() {
+        // Load saved states at startup
+        //ChannelStateManager.loadFromDisk();
+        
         beats.setUpMidi();
         frame = new JFrame("Cyber BeatBox");
+        // Add window listener to save on exit
+        /*
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ChannelStateManager.saveToDisk();
+                beats.close();
+            }
+        });*/
+        
         BorderLayout layout = new BorderLayout();
         background = new JPanel(layout);
         background.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));

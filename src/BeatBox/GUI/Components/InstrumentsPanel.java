@@ -6,6 +6,7 @@ package BeatBox.GUI.Components;
 
 import BeatBox.Instruments.Channel;
 import BeatBox.Music.Beats;
+import BeatBox.Utilities.ChannelStateManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -32,13 +33,44 @@ public class InstrumentsPanel  extends JPanel {
     
     public void setChannel(String channelName) {
         if (!channelName.equals(currentChannelName)) {
+            
+             // Save current state before switching
+            if (currentChannelName != null) {
+                ChannelStateManager.saveState(currentChannelName, this);
+            }
+            
             currentChannelName = channelName;
             channel = new Channel(channelName); // Initialize channel here
             Beats.getInstance().setCurrentChannel(channel.getChannel());
             refreshCheckboxes();
+            
+            // Restore state if exists
+            restoreState(channelName);
         }
     }
 
+    public void restoreState(String channelName) {
+        Map<String, boolean[]> savedStates = ChannelStateManager.getState(channelName);
+        
+        savedStates.forEach((instrumentName, states) -> {
+            List<JCheckBox> checkboxes = chkBxsMap.get(instrumentName);
+            if (checkboxes != null && checkboxes.size() == states.length) {
+                for (int i = 0; i < states.length; i++) {
+                    checkboxes.get(i).setSelected(states[i]);
+                }
+            }
+        });
+    }
+    
+    public Map<String, List<JCheckBox>> getCheckboxStates() {
+        // Return a defensive copy to prevent external modification
+        Map<String, List<JCheckBox>> copy = new HashMap<>();
+        chkBxsMap.forEach((instrumentName, checkboxes) -> 
+            copy.put(instrumentName, new ArrayList<>(checkboxes))
+        ); 
+        return copy;
+    }
+    
     private void refreshCheckboxes() {
         checkBoxPanel.removeAll();
         chkBxsMap.clear(); 
@@ -77,14 +109,6 @@ public class InstrumentsPanel  extends JPanel {
         JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         
         // Initialize checkboxes
-        /*List <JCheckBox> rowChkBxs = IntStream.range(0, NUM_CHECKBOXES)
-                .mapToObj(i -> {
-                    JCheckBox chkBx = new JCheckBox();
-                    chkBx.addItemListener(new CheckListener(instrumentName, i));
-                    return chkBx;
-                })
-                .collect(Collectors.toList());*/
-        
         chkBxs = IntStream.range(0, NUM_CHECKBOXES)
                 .mapToObj(i -> {
                     JCheckBox chkBx = new JCheckBox();
@@ -97,7 +121,6 @@ public class InstrumentsPanel  extends JPanel {
         checkBoxPanel.setLayout(new GridLayout(1, NUM_CHECKBOXES, 2, 1));
         
         chkBxsMap.put(instrumentName, chkBxs);
-        //rowChkBxs.forEach(checkBoxPanel::add);
         chkBxs.forEach(checkBoxPanel::add);
         
         return checkBoxPanel;
@@ -135,4 +158,5 @@ public class InstrumentsPanel  extends JPanel {
     }
     
 }
+
 
