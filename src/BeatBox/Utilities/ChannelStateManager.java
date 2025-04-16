@@ -38,27 +38,32 @@ public class ChannelStateManager {
     public static void clearStates() {
         channelStates.clear();
     }
-    /*
-    public static void saveToDisk() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(
-                new FileOutputStream(STATE_FILE))) {
-            oos.writeObject(channelStates);
+    
+    public static void saveToFile() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(STATE_FILE))) {
+            out.writeObject(channelStates);
         } catch (IOException e) {
-            System.err.println("Failed to save states: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     @SuppressWarnings("unchecked")
-    public static void loadFromDisk() {
-        try (ObjectInputStream ois = new ObjectInputStream(
-                new FileInputStream(STATE_FILE))) {
-            Object obj = ois.readObject();
+    public static void loadFromFile() {
+        File file = new File(STATE_FILE);
+        if (!file.exists()) return;
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            Object obj = in.readObject();
             if (obj instanceof Map) {
+                Map<?, ?> loaded = (Map<?, ?>) obj;
                 channelStates.clear();
-                channelStates.putAll((Map<String, Map<String, boolean[]>>) obj);
+                for (Map.Entry<?, ?> entry : loaded.entrySet()) {
+                    if (entry.getKey() instanceof String && entry.getValue() instanceof Map) {
+                        channelStates.put((String) entry.getKey(), (Map<String, boolean[]>) entry.getValue());
+                    }
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("No saved states found or error loading: " + e.getMessage());
+            e.printStackTrace();
         }
-    }*/
+    }
 }

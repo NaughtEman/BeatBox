@@ -10,6 +10,7 @@ package BeatBox.GUI.Listeners;
  */
 
 import BeatBox.Music.Beats;
+import BeatBox.Utilities.ChannelStateManager;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -44,6 +45,31 @@ public class ButtonListener implements ActionListener{
             case "tempo down":
                 try{
                     beats.updateTempo(-5);
+                }catch(Exception ex){ex.printStackTrace();}
+                break;
+            case "reset":
+                try{
+                    beats.resetSequence();
+                }catch(Exception ex){ex.printStackTrace();}
+                break;
+            case "save":
+                try{
+                    ChannelStateManager.saveToFile();
+                }catch(Exception ex){ex.printStackTrace();}
+                break;
+            case "load":
+                try{
+                    ChannelStateManager.loadFromFile();
+                }catch(Exception ex){ex.printStackTrace();}
+                break;
+            case "start recording":
+                try{
+                   
+                }catch(Exception ex){ex.printStackTrace();}
+                break;
+            case "Stop recording":
+                try{
+                    
                 }catch(Exception ex){ex.printStackTrace();}
                 break;
             default:

@@ -32,6 +32,11 @@ public class Buttons {
         panel.add(Jbutton("Stop"));
         panel.add(Jbutton("Tempo Up"));
         panel.add(Jbutton("Tempo Down"));
+        panel.add(Jbutton("Reset"));
+        panel.add(Jbutton("Save"));
+        panel.add(Jbutton("Load"));
+        panel.add(Jbutton("Start Recording"));
+        panel.add(Jbutton("Stop Recording"));
         
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         

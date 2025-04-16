@@ -71,12 +71,8 @@ public class Beats {
     }
    
    public void makeTracks(int key, int tick){
-       // Clear previous events at this tick position
-        removeEventsAtTick(tick);
-       
        track.add(makeEvent(144,currentChannel,key,100,tick));
        track.add(makeEvent(128,currentChannel,key,100,tick+1));
-       
    }
    
    public void removeNote(int key, int tick) {
@@ -100,22 +96,10 @@ private void removeEventsForNote(int key, int tick) {
     toRemove.forEach(event -> track.remove(event));
 }
    
-   private void removeEventsAtTick(int tick) {
-        // Remove any existing events at this tick position
-        List<MidiEvent> toRemove = new ArrayList<>();
-        for (int i = 0; i < track.size(); i++) {
-            MidiEvent event = track.get(i);
-            if (event.getTick() == tick || event.getTick() == tick + 1) {
-                toRemove.add(event);
-            }
-        }
-        toRemove.forEach(event -> track.remove(event));
-    }
-   
    // Add this new method to handle channel changes
     public void setCurrentChannel(int channel) {
         this.currentChannel = channel;
-        resetSequence(); // Clear existing sequence when channel changes
+        //resetSequence(); // Clear existing sequence when channel changes
     }
     
     public void resetSequence() {
